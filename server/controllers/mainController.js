@@ -8,14 +8,19 @@ exports.homepage = async(req, res) => {
         title: 'Base App',
         description: 'Base App for Habitat Connect'
     }
-    res.render('index', locals);
+    res.render('index', {
+        locals,
+        layout: 'layouts/front-page'
+        /**
+         * "../../Frontend/views/layouts/front-page"
+         */
+    });
 }
 
 /**
  * GET /about
  * About
  */
-
 exports.about = async(req, res) => {
     const locals = {
         title: 'About - Base App',
