@@ -66,9 +66,65 @@ exports.dashboardViewAnn = async(req, res) => {
 };
 
 /**
- * GET /
+ * PUT /
  * update announcement
  */
 exports.dashboardUpdateAnn = async(req, res) => {
+  try {
+    await Announcement.findByIdAndUpdate(
+      { _id: req.params.id },
+      { title: req.body.title,
+        body: req.body.body
+      })
+      // only owner can update their announcements
+      .where({user: req.user.id});
 
+      res.redirect('/dashboard');
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/**
+ * Delete /
+ * delete announcement
+ */
+exports.dashboardDeleteAnn = async (req, res) => {
+  try {
+    await Announcement.deleteOne({
+      _id: req.params.id
+    })
+    // only owner can delete their announcements
+    .where({user: req.user.id});
+
+    res.redirect('/dashboard');
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/**
+ * GET /
+ * add announcement
+ */
+exports.dashboardAddAnn = async (req, res) => {
+  res.render('dashboard/add-ann', {
+    layout:'layouts/dashboard'
+  });
+};
+
+/**
+ * POST /
+ * add announcement
+ */
+exports.dashboardPostAnn = async (req, res) => {
+  try {
+
+    req.body.user = req.user.id;
+    await Announcement.create(req.body);
+    res.redirect('/dashboard');
+
+  } catch (error) {
+    console.log(error);
+  }
 };
