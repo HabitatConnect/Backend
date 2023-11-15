@@ -41,3 +41,34 @@ exports.dashboard = async(req, res) => {
     console.log(error);
   }
 };
+
+/**
+ * GET /
+ * view announcement
+ */
+exports.dashboardViewAnn = async(req, res) => {
+  const announcement = await Announcement.findById({ _id: req.params.id})
+  // user can only see their announcements
+  // prob delete where part later on
+  // not if we should delete .lean part
+  .where({ user: req.user.id }).lean();
+
+  if (announcement) {
+    res.render('dashboard/view-ann',{
+      annID: req.params.id,
+      announcement,
+      layout: 'layouts/dashboard'
+    });
+  } else{
+    res.send('Retrieving announcement went wrong...')
+  }
+
+};
+
+/**
+ * GET /
+ * update announcement
+ */
+exports.dashboardUpdateAnn = async(req, res) => {
+
+};
