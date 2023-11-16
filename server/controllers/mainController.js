@@ -11,9 +11,6 @@ exports.homepage = async(req, res) => {
     res.render('index', {
         locals,
         layout: 'layouts/front-page'
-        /**
-         * "../../Frontend/views/layouts/front-page"
-         */
     });
 }
 

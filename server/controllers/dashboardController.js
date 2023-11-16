@@ -19,7 +19,7 @@ exports.dashboard = async(req, res) => {
 
   try {
     const announcements = await Announcement.aggregate([
-      { $sort: {createdAt: -1} },
+      { $sort: {updatedAt: -1} },
       // this is that only a single user sees their own
       // announcements. we will need to change this later on
       { $match: {user: new mongoose.Types.ObjectId(req.user.id)} },
@@ -74,7 +74,8 @@ exports.dashboardUpdateAnn = async(req, res) => {
     await Announcement.findByIdAndUpdate(
       { _id: req.params.id },
       { title: req.body.title,
-        body: req.body.body
+        body: req.body.body,
+        updatedAt: Date.now()
       })
       // only owner can update their announcements
       .where({user: req.user.id});
@@ -123,6 +124,50 @@ exports.dashboardPostAnn = async (req, res) => {
     req.body.user = req.user.id;
     await Announcement.create(req.body);
     res.redirect('/dashboard');
+
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/**
+ * GET /
+ * search announcement
+ */
+exports.dashboardSearch = async (req, res) => {
+  try {
+    res.render('dashboard/search-ann', {
+      searchResults: '',
+      layout: 'layout/dashboard'
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/**
+ * POST /
+ * search announcement
+ */
+exports.dashboardSearchPost = async(req, res) => {
+  try {
+
+    let searchTerm = req.body.searchTerm;
+    const searchNoSpecialChars = searchTerm.replace(/[^a-zA-Z0-9]/g, "");
+
+    const searchResults = await Announcement.find({
+      $or: [
+        { title: { $regex: new RegExp(searchNoSpecialChars, 'i') }},
+        { body: { $regex: new RegExp(searchNoSpecialChars, 'i') }}
+      ]
+    })
+    // only owner can search their announcements
+    .where({user: req.user.id});
+    
+    res.render('dashboard/search-ann', {
+      searchResults,
+      layout: 'layouts/dashboard'
+    });
 
   } catch (error) {
     console.log(error);

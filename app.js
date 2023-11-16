@@ -48,6 +48,7 @@ app.set('view engine', 'ejs');
 app.use('/', require('./server/routes/auth'));
 app.use('/', require('./server/routes/index'));
 app.use('/', require('./server/routes/dashboard'));
+app.use('/', require('./server/routes/laundryChecker'));
 
 // always 404 last route
 app.get('*', function(req, res){
