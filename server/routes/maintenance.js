@@ -7,12 +7,12 @@ const maintenanceController = require('../controllers/maintenanceController');
  * maintenance routes
  */
 router.get('/maintenance', isLoggedIn, maintenanceController.maintenance);
-//router.get('/dashboard/item/:id', isLoggedIn, dashboardController.dashboardViewAnn);
-//router.put('/dashboard/item/:id', isLoggedIn, dashboardController.dashboardUpdateAnn);
-//router.delete('/dashboard/item-delete/:id', isLoggedIn, dashboardController.dashboardDeleteAnn);
-//router.get('/dashboard/add-ann', isLoggedIn, dashboardController.dashboardAddAnn);
-//router.post('/dashboard/add-ann', isLoggedIn, dashboardController.dashboardPostAnn);
-//router.get('/dashboard/search-ann', isLoggedIn, dashboardController.dashboardSearch);
-//router.post('/dashboard/search-ann', isLoggedIn, dashboardController.dashboardSearchPost);
+router.get('/maintenance/item/:id', isLoggedIn, maintenanceController.maintenanceViewTicket);
+router.put('/maintenance/item/:id', isLoggedIn, maintenanceController.maintenanceUpdateTicket);
+router.delete('/maintenance/item-delete/:id', isLoggedIn, maintenanceController.maintenanceDeleteTicket);
+router.get('/maintenance/add-ticket', isLoggedIn, maintenanceController.maintenanceAddTicket);
+router.post('/maintenance/add-ticket', isLoggedIn, maintenanceController.maintenancePostTicket);
+router.get('/mainteance/search-ticket', isLoggedIn, maintenanceController.maintenanceSearch);
+router.post('/maintenance/search-ticket', isLoggedIn, maintenanceController.maintenanceSearchPost);
 
 module.exports = router;
