@@ -4,8 +4,9 @@ const Schema = mongoose.Schema;
 const WMSchema = new Schema({
 
     status: {
-        type: Boolean,
-        default: false
+        type: String,
+        enum: ['Available', 'In use'],
+        default: 'Available',
     },
     updatedAt: {
         type: Date,
