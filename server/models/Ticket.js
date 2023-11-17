@@ -28,6 +28,6 @@ const TicketSchema = new Schema({
 
 // ticket will expire in 3 days
 // not working
-//TicketSchema.index({ createdAt: 1 }, { expireAfterSeconds: 3 * 24 * 60 * 60 });
+TicketSchema.index({ createdAt: 1 }, { expireAfterSeconds: (3 * 24 * 60 * 60) });
 
 module.exports = mongoose.model('Ticket', TicketSchema)

@@ -2,9 +2,7 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 const AnnSchema = new Schema({
-
-    // user can only see their announcements
-    // will need to change this
+    // owner can update/delete announcements
     user: {
         type: Schema.ObjectId,
         ref: 'User'

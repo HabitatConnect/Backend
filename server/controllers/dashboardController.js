@@ -19,10 +19,13 @@ exports.dashboard = async(req, res) => {
 
   try {
     const announcements = await Announcement.aggregate([
-      { $sort: {updatedAt: -1} },
-      // this is that only a single user sees their own
-      // announcements. we will need to change this later on
-      { $match: {user: new mongoose.Types.ObjectId(req.user.id)} },
+      {
+        $addFields: {
+          latestDate: { $max: ['$createdAt', '$updatedAt'] }
+        }
+      },
+      { $sort: { latestDate: -1 } },
+      { $project: { latestDate: 0 } },
     ])
     .skip(perPage*page - perPage)
     .limit(perPage)
@@ -47,11 +50,7 @@ exports.dashboard = async(req, res) => {
  * view announcement
  */
 exports.dashboardViewAnn = async(req, res) => {
-  const announcement = await Announcement.findById({ _id: req.params.id})
-  // user can only see their announcements
-  // prob delete where part later on
-  // not if we should delete .lean part
-  .where({ user: req.user.id }).lean();
+  const announcement = await Announcement.findById({ _id: req.params.id});
 
   if (announcement) {
     res.render('dashboard/view-ann',{
@@ -160,9 +159,7 @@ exports.dashboardSearchPost = async(req, res) => {
         { title: { $regex: new RegExp(searchNoSpecialChars, 'i') }},
         { body: { $regex: new RegExp(searchNoSpecialChars, 'i') }}
       ]
-    })
-    // only owner can search their announcements
-    .where({user: req.user.id});
+    });
     
     res.render('dashboard/search-ann', {
       searchResults,
