@@ -51,6 +51,7 @@ app.use('/', require('./server/routes/index'));
 app.use('/', require('./server/routes/dashboard'));
 app.use('/', require('./server/routes/laundryChecker'));
 app.use('/', require('./server/routes/maintenance'));
+app.use('/', require('./server/routes/profile'));
 
 // always 404 last route
 app.get('*', function(req, res){

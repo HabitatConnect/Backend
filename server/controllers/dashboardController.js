@@ -1,5 +1,4 @@
 const Announcement = require('../models/Announcements');
-const mongoose = require('mongoose');
 
 
 /**
@@ -33,7 +32,7 @@ exports.dashboard = async(req, res) => {
 
     const count = await Announcement.countDocuments().exec();
     res.render('dashboard/index', {
-      userName: req.user.firstName,
+      username: req.user.username,
       locals,
       announcements,
       layout: 'layouts/dashboard',
