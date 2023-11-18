@@ -5,8 +5,8 @@
 
 exports.homepage = async(req, res) => {
     const locals = {
-        title: 'Base App',
-        description: 'Base App for Habitat Connect'
+        title: 'Habitat Connect',
+        description: 'Habitat Connect Web App'
     }
     res.render('index', {
         locals,

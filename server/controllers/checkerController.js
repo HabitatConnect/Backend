@@ -1,5 +1,4 @@
 const WashingMachine = require('../models/WashingMachine');
-const mongoose = require('mongoose');
 
 /**
  * GET /

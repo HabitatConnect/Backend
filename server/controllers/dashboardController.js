@@ -49,7 +49,9 @@ exports.dashboard = async(req, res) => {
  * view announcement
  */
 exports.dashboardViewAnn = async(req, res) => {
-  const announcement = await Announcement.findById({ _id: req.params.id});
+  const announcement = await Announcement.findById({ _id: req.params.id})
+  .populate('user', 'username profileImage')
+  .exec();
 
   if (announcement) {
     res.render('dashboard/view-ann',{
