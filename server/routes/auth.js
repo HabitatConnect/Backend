@@ -1,86 +1,37 @@
 const express = require('express');
 const router = express.Router();
-const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const User = require('../models/User');
+const authController = require('../controllers/authController');
 
-passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.GOOGLE_CALLBACK_URL
-  },
-  async function(accessToken, refreshToken, profile, done) {
-    
-    const newUser = {
-        googleId: profile.id,
-        displayName: profile.displayName,
-        firstName: profile.name.givenName,
-        lastName: profile.name.familyName,
-        profileImage: profile.photos[0].value
-    }
-
-    try {
-        let user = await User.findOne({googleId: profile.id});
-
-        if (user){
-            // user found in DB
-            done(null, user);
-        } else{
-            // user not found in DB
-            user = await User.create(newUser);
-            done(null, user);
-        }
+/**
+ * Local routes
+ */
+router.get('/register', authController.authGetRegister);
+router.post('/register', authController.authLocalRegister);
+router.get('/login', authController.authGetLogin);
+router.post('/login', authController.authPostLogin);
+router.get('/auth/complete-profile', authController.authGetCompleteProfile);
+router.post('/auth/complete-profile', authController.authPostCompleteProfile);
 
 
-    } catch (error) {
-        console.log(error);
-    }
+/**
+ * Google routes
+ */
+router.get('/auth/google/register', authController.authGoogleRegister);
+router.get('/google/callback/register', authController.authRegisterCallback);
+router.get('/auth/google/login', authController.authGoogleLogin);
+router.get('/google/callback/login', authController.authLoginCallback);
 
-  }
-));
 
-// google login route
-router.get('/auth/google',
-  passport.authenticate('google', { scope: ['email', 'profile'] }));
-// retrieve user data
-router.get('/google/callback', 
-  passport.authenticate('google', { failureRedirect: '/login-failure',
-  successRedirect: '/dashboard'
-})
-);
+/**
+ * login failure
+ */
+router.get('/login-failure', authController.authLoginFailure);
 
-// route in case of failure
-router.get('login-failure', (req, res) =>{
-    res.send('Something went wrong...')
-});
 
-// destroy user session
-router.get('/logout', (req, res) => {
-    req.session.destroy(error => {
-        if(error) {
-            console.log(error);
-            res.send('Error loggin out');
-        } else{
-            res.redirect('/')
-        }
-    })
-});
-
-// presist user data after successful authentication
-passport.serializeUser(function(user, done){
-    done(null, user.id);
-});
-
-// retrieve user data from session
-passport.deserializeUser(function(id, done){
-    User.findById(id)
-        .then(user => {
-            done(null, user);
-        })
-        .catch(err => {
-            done(err, null);
-        });
-});
-
+/**
+ * logout route
+ */
+// Logout route
+router.get('/logout', authController.authLogout);
 
 module.exports = router;

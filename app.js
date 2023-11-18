@@ -4,6 +4,7 @@ const express = require('express');
 const expressLayouts = require('express-ejs-layouts');
 const methodOverride = require('method-override');
 const connectDB = require('./server/config/db');
+const flash = require('express-flash');
 const session = require('express-session');
 const passport = require('passport');
 const MongoStore = require('connect-mongo');
@@ -15,7 +16,8 @@ app.use(session({
     secret: 'keyboard cat',
     resave: false,
     saveUninitialized: true,
-    store: MongoStore.create({
+    store: new MongoStore({
+        mongooseConnection: require('mongoose').connection,
         mongoUrl: process.env.MONGODB_URI
     }),
     cookie: {maxAge: 3600000}
@@ -26,6 +28,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(methodOverride("_method"));
+app.use(flash());
 
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
@@ -40,8 +43,6 @@ app.use(express.static('../Frontend/public'));
 app.use(expressLayouts);
 app.set('layout', 'layouts/main');
 app.set('views', '../Frontend/views');
-app.set('view engine', 'ejs');
-
 app.set('view engine', 'ejs');
 
 // routes

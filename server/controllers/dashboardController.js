@@ -61,7 +61,6 @@ exports.dashboardViewAnn = async(req, res) => {
   } else{
     res.send('Retrieving announcement went wrong...')
   }
-
 };
 
 /**
