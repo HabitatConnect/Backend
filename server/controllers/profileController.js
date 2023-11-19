@@ -25,11 +25,15 @@ exports.profile = async (req, res) => {
     }
 };
 
+
+// MAY BE PUT
 /**
  * POST /
- * uodate profile
+ * update profile
  */
-exports.profileUpdate = async(req, res) => {
+exports.profileUpdate = async(req, res) => {  
+
+  // add validation of username and room number
   try {
     await User.findByIdAndUpdate(
       { _id: req.user.id },

@@ -22,7 +22,11 @@ const AnnSchema = new Schema({
     updatedAt: {
         type: Date,
         default: Date.now()
-    }
+    },
+    comments: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Comment',
+    }],
 });
 
-module.exports = mongoose.model('Announcement', AnnSchema)
+module.exports = mongoose.model('Announcement', AnnSchema);

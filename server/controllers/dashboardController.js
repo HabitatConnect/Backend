@@ -1,4 +1,5 @@
 const Announcement = require('../models/Announcements');
+const Comment = require('../models/Comment');
 
 
 /**
@@ -49,18 +50,38 @@ exports.dashboard = async(req, res) => {
  * view announcement
  */
 exports.dashboardViewAnn = async(req, res) => {
-  const announcement = await Announcement.findById({ _id: req.params.id})
-  .populate('user', 'username profileImage')
-  .exec();
 
-  if (announcement) {
-    res.render('dashboard/view-ann',{
-      annID: req.params.id,
-      announcement,
-      layout: 'layouts/dashboard'
-    });
-  } else{
-    res.send('Retrieving announcement went wrong...')
+  try {
+
+    const announcement = await Announcement.findById(req.params.id)
+    .populate('user', 'username profileImage')
+    .exec();
+
+    if (announcement) {
+
+      const isOwner = announcement.user._id.equals(req.user._id);
+
+      // fetch comments
+      const comments = await Comment.find({ announcement: announcement._id })
+      .populate('user', 'username profileImage')
+  
+      res.render('dashboard/view-ann',{
+        annID: req.params.id,
+        announcement,
+        // if no comments, pass an empty list
+        comments: comments || [],
+        layout: 'layouts/dashboard',
+        isOwner: isOwner,
+        viewer: req.user,
+        error: null,
+      });
+    } else{
+      res.send('Retrieving announcement went wrong...')
+    }
+
+  } catch (error) {
+    console.log(error);
+    res.send('Error fetching announcement or comments...');
   }
 };
 
@@ -128,6 +149,130 @@ exports.dashboardPostAnn = async (req, res) => {
     console.log(error);
   }
 };
+
+/**
+ * GET /
+ * add comment
+ */
+exports.dashboardAddComm = async (req, res) => {
+  res.render('dashboard/add-comm', {
+    annID: req.params.id,
+    layout: 'layouts/dashboard',
+    error: null,
+  });
+};
+
+/**
+ * POST /
+ * post comment
+ */
+exports.dashboardPostComm = async (req, res) => {
+  try {
+
+    const annID = req.params.id;
+
+    // validate comment length
+    if (req.body.text.length > 500) {
+      // not passed. render view and display error
+
+      const error = `Comment must not exceed 500 characters.`;
+
+      const announcement = await Announcement.findById(req.params.id)
+      .exec();
+      
+      res.render('dashboard/add-comm', {
+        annID: req.params.id,
+        announcement,
+        layout: 'layouts/dashboard',
+        error,
+      });
+      return;
+    }
+
+    
+    // create comment
+    const comment = new Comment({
+      user: req.user.id,
+      announcement: req.params.id,
+      text: req.body.text,
+      createdAt: Date.now(),
+    });
+
+    await comment.save();
+
+    res.redirect(`/dashboard/item/${req.params.id}`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/**
+ * PUT /
+ * update comment
+ */
+exports.dashboardUpdateComm = async(req, res) => {
+  try {
+
+    // validate comment length
+    if (req.body.updatedText.length > 500) {
+
+      const error = `Comment must not exceed 500 characters.`;
+
+      // render the view to display the error
+      const announcement = await Announcement.findById(req.params.id)
+      .populate('user', 'username profileImage')
+      .exec();
+      const isOwner = announcement.user._id.equals(req.user._id);
+      const comments = await Comment.find({ announcement: announcement._id })
+      .populate('user', 'username profileImage')
+      
+
+      res.render('dashboard/view-ann', {
+        annID: req.params.id,
+        announcement,
+        comments,
+        layout: 'layouts/dashboard',
+        isOwner,
+        viewer: req.user,
+        error,
+      });
+      return;
+    }
+
+    await Comment.findByIdAndUpdate(
+      { _id: req.params.commId },
+      { text: req.body.updatedText,
+        updatedAt: Date.now(),
+      })
+      // only owner can update their comments
+      .where({user: req.user.id});
+
+      res.redirect(`/dashboard/item/${req.params.id}`);
+  } catch (error) {
+    console.log(error);
+    res.send("Error updating comment.");
+  }
+};
+
+/**
+ * Delete /
+ * delete comment
+ */
+exports.dashboardDeleteComm = async (req, res) => {
+  try {
+    await Comment.findByIdAndDelete({
+      _id: req.params.commId
+    })
+    // only owner can delete their comment
+    .where({user: req.user.id});
+
+    res.redirect(`/dashboard/item/${req.params.id}`);
+  } catch (error) {
+    console.log(error);
+    res.send("Error deleting comment.");
+  }
+};
+
 
 /**
  * GET /
