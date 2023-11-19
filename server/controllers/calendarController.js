@@ -8,10 +8,11 @@ const Announcement = require('../models/Announcements');
 exports.calendar = async (req, res) => {
     
     const locals = {
-        title: 'Profile',
-        description: 'Profile page'
+        title: 'Calendar View',
+        description: 'Calendar View'
     };
 
+    // get current date
     const currentDate = {
         day: new Date().getDate(),
         month: new Date().getMonth() + 1,

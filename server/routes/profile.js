@@ -6,7 +6,9 @@ const profileController = require('../controllers/profileController');
 /**
  * profile routes
  */
+// load profile
 router.get('/profile', isLoggedIn, profileController.profile);
-router.post('/profile/update', isLoggedIn, profileController.profileUpdate);
+// update profile
+router.put('/profile/update', isLoggedIn, profileController.profileUpdate);
 
 module.exports = router;

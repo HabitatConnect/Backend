@@ -261,18 +261,6 @@ exports.authPostCompleteProfile = async (req, res) => {
     errors.push("Room Number must be between 300 and 500.");
   }
 
-  // birthdate validation
-  //const dateRegex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/;
-  //if (!dateRegex.test(birthdate)) {
-  //  errors.push("Birthdate must be in the format YYYY-MM-DD.");
-  //} else {
-  //  const inputDate = new Date(birthdate);
-  //  const currentDate = new Date();
-  //  if (inputDate >= currentDate) {
-  //    errors.push("Birthdate must be smaller than the current date.");
-  //  }
-  //}
-
   if (errors.length > 0) {
     return res.render('auth/complete-profile', { 
         errors: errors

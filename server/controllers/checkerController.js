@@ -37,7 +37,7 @@ exports.checker = async(req, res) => {
 };
 
 /**
- * POST /
+ * PUT /
  * update status of washing machine
  */
 exports.checkerUpdateStatus = async(req, res) => {

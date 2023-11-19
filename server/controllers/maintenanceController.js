@@ -54,7 +54,8 @@ exports.maintenanceViewTicket = async(req, res) => {
     res.render('maintenance/view-ticket',{
       ticketID: req.params.id,
       ticket,
-      layout: 'layouts/maintenance'
+      layout: 'layouts/maintenance',
+      error: null,
     });
   } else{
     res.send('Retrieving ticket went wrong...')
@@ -67,6 +68,34 @@ exports.maintenanceViewTicket = async(req, res) => {
  */
 exports.maintenanceUpdateTicket = async(req, res) => {
   try {
+
+    // retrieve user data
+    const { title, body } = req.body;
+    const errors = [];
+
+    // title length validation
+    if (title.length > 500 ) {
+      errors.push("Title cannot exceed 500 characters.");
+    }
+
+    // body length validation
+    if (body.length > 1000) {
+      errors.push("Body cannot exceed 1,000 characters.");
+    }
+
+    if (errors.length > 0) {
+      const ticket = Ticket.findById(req.params.id);
+
+      return res.render('maintenance/view-ticket', {
+        ticketID: req.params.id,
+        ticket: ticket, 
+        layout: 'layouts/maintenance',  
+        error: errors
+      }); 
+    }
+
+    // validation passed
+    // update ticket
     await Ticket.findByIdAndUpdate(
       { _id: req.params.id },
       { title: req.body.title,
@@ -104,7 +133,8 @@ exports.maintenanceDeleteTicket = async (req, res) => {
  */
 exports.maintenanceAddTicket = async (req, res) => {
   res.render('maintenance/add-ticket', {
-    layout:'layouts/maintenance'
+    layout:'layouts/maintenance',
+    error: null,
   });
 };
 
@@ -115,8 +145,34 @@ exports.maintenanceAddTicket = async (req, res) => {
 exports.maintenancePostTicket = async (req, res) => {
   try {
 
-    req.body.user = req.user.id;
-    await Ticket.create(req.body);
+    // retrieve user data
+    const { title, body } = req.body;
+    const errors = [];
+
+    // title length validation
+    if (title.length > 500 ) {
+      errors.push("Title cannot exceed 500 characters.");
+    }
+
+    // body length validation
+    if (body.length > 1000) {
+      errors.push("Body cannot exceed 1,000 characters.");
+    }
+
+    if (errors.length > 0) {
+      return res.render('maintenance/add-ticket', { 
+        layout: 'layouts/maintenance',  
+        error: errors
+      }); 
+    }
+
+    // validation passed
+    // create ticket
+    await Ticket.create({
+      user: req.user.id,
+      title,
+      body,
+    });
     res.redirect('/maintenance');
 
   } catch (error) {

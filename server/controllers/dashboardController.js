@@ -91,6 +91,42 @@ exports.dashboardViewAnn = async(req, res) => {
  */
 exports.dashboardUpdateAnn = async(req, res) => {
   try {
+
+    // retrieve user data
+    const { title, body } = req.body;
+    const errors = [];
+
+    // title length validation
+    if (title.length > 500 ) {
+      errors.push("Title cannot exceed 500 characters.");
+    }
+
+    // body length validation
+    if (body.length > 1000) {
+      errors.push("Body cannot exceed 1,000 characters.");
+    }
+
+    if (errors.length > 0) {
+      const announcement = await Announcement.findById(req.params.id)
+      .populate('user', 'username profileImage')
+      .exec();
+      const isOwner = announcement.user._id.equals(req.user._id);
+      const comments = await Comment.find({ announcement: announcement._id })
+      .populate('user', 'username profileImage')
+
+      return res.render('dashboard/view-ann', {
+        annID: req.params.id,
+        announcement,
+        comments,
+        layout: 'layouts/dashboard',
+        isOwner: isOwner,
+        viewer: req.user,
+        error: errors,
+      });
+    }
+
+    // validation passed
+    // update announcement
     await Announcement.findByIdAndUpdate(
       { _id: req.params.id },
       { title: req.body.title,
@@ -130,7 +166,8 @@ exports.dashboardDeleteAnn = async (req, res) => {
  */
 exports.dashboardAddAnn = async (req, res) => {
   res.render('dashboard/add-ann', {
-    layout:'layouts/dashboard'
+    layout:'layouts/dashboard',
+    error: null,
   });
 };
 
@@ -141,8 +178,37 @@ exports.dashboardAddAnn = async (req, res) => {
 exports.dashboardPostAnn = async (req, res) => {
   try {
 
-    req.body.user = req.user.id;
-    await Announcement.create(req.body);
+    // retrieve user data
+    const { title, body } = req.body;
+    const errors = [];
+
+    // title length validation
+    if (title.length > 500 ) {
+      errors.push("Title cannot exceed 500 characters.");
+    }
+
+    // body length validation
+    if (body.length > 1000) {
+      errors.push("Body cannot exceed 1,000 characters.");
+    }
+
+    if (errors.length > 0) {
+      return res.render('dashboard/add-ann', {
+        layout: 'layouts/dashboard',
+        error: errors,
+      });
+    }
+
+    // validation passed
+    // create announcement
+    const announcement = new Announcement({
+      user: req.user.id,
+      title: title,
+      body: body,
+      createdAt: Date.now(),
+    });
+
+    await announcement.save();
     res.redirect('/dashboard');
 
   } catch (error) {
@@ -169,8 +235,6 @@ exports.dashboardAddComm = async (req, res) => {
 exports.dashboardPostComm = async (req, res) => {
   try {
 
-    const annID = req.params.id;
-
     // validate comment length
     if (req.body.text.length > 500) {
       // not passed. render view and display error
@@ -189,7 +253,7 @@ exports.dashboardPostComm = async (req, res) => {
       return;
     }
 
-    
+    // validation passed
     // create comment
     const comment = new Comment({
       user: req.user.id,

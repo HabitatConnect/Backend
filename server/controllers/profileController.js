@@ -19,6 +19,7 @@ exports.profile = async (req, res) => {
             locals,
             user,
             layout: 'layouts/profile',
+            errors: null,
           }); 
     } catch (error) {
       console.log(error);
@@ -26,14 +27,39 @@ exports.profile = async (req, res) => {
 };
 
 
-// MAY BE PUT
 /**
- * POST /
+ * PUT /
  * update profile
  */
 exports.profileUpdate = async(req, res) => {  
 
-  // add validation of username and room number
+  // retrieve user data
+  const { username, roomNumber, birthdate } = req.body;
+  const errors = [];
+
+  // username validation
+  if (!/^[^\s]{1,12}$/.test(username)) {
+      errors.push("Username cannot be longer than 12 characters.");
+  }
+
+  // roomnumber validation
+  if (!/^(3[0-9]{2}|4[0-9]{2}|500)$/.test(roomNumber)) {
+      errors.push("Room Number must be between 300 and 500.");
+  }
+
+  if (errors.length > 0) {
+      const user = await User.findById(req.user.id);
+      return res.render('profile/index', {
+          locals: {
+              title: 'Profile',
+              description: 'Profile page'
+          },
+          user,
+          layout: 'layouts/profile',
+          errors,
+      });
+  }
+
   try {
     await User.findByIdAndUpdate(
       { _id: req.user.id },
