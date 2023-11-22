@@ -8,8 +8,8 @@ const Comment = require('../models/Comment');
  */
 exports.dashboard = async(req, res) => {
 
-  // 5 announcements per page
-  let perPage = 5;
+  // 8 announcements per page
+  let perPage = 8;
   let page = req.query.page || 1;
   
   const locals = {

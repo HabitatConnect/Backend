@@ -27,7 +27,7 @@ exports.maintenance = async(req, res) => {
     .limit(perPage)
     .exec();
 
-    const count = await Ticket.countDocuments().exec();
+    const count = await Ticket.countDocuments({ user: req.user.id }).exec();
     res.render('maintenance/index', {
       userName: req.user.firstName,
       locals,
