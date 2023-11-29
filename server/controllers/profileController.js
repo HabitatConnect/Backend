@@ -1,3 +1,4 @@
+// profileController.js
 const User = require('../models/User');
 
 
@@ -84,17 +85,23 @@ exports.profileUpdate = async (req, res) => {
     });
   }
 
+  
+
   try {
     await User.findByIdAndUpdate(
       { _id: req.user.id },
       {
         username: req.body.username,
         roomNumber: req.body.roomNumber,
-        birthdate: req.body.birthdate
+        birthdate: req.body.birthdate,
+        profileImage: req.body.profileImage
       });
 
     res.redirect('/profile');
   } catch (error) {
     console.log(error);
   }
+  
+  
+  
 };
