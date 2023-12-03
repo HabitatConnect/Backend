@@ -1,5 +1,3 @@
-
-// calendarController.ejs
 const User = require('../models/User');
 const Announcement = require('../models/Announcements');
 
@@ -46,24 +44,23 @@ exports.calendar = async (req, res) => {
          currentDate.year -= 1; // Move to the previous year when going back from January
      }
 
-
-    // get user's birthdates
-    const users = await User.find();
-    const userBirthdays = users.map(user => ({
-        userId: user._id,
-        username: user.username,
-        birthdate: user.birthdate.getDate(),
-        birthmonth: user.birthdate.getMonth() + 1,
-        birthyear: user.birthdate.getFullYear(),
-    }));
-
     try {
+        // get user's birthdates
+        const users = await User.find();
+        const userBirthdays = users.map(user => ({
+            userId: user._id,
+            username: user.username,
+            birthdate: user.birthdate ? user.birthdate.getDate() : null,
+            birthmonth: user.birthdate ? user.birthdate.getMonth() + 1 : null,
+            birthyear: user.birthdate ? user.birthdate.getFullYear() : null,
+        }));
+
         res.render('calendar/index', {
             locals,
             userBirthdays,
             currentDate,
             layout: 'layouts/calendar',
-          }); 
+        }); 
     } catch (error) {
       console.log(error);
     }
