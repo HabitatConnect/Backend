@@ -20,7 +20,7 @@ async function (email, password, done) {
 
     if (!user) {
       // user not found DB
-      done(null, false, { message: 'User not found' });
+      return done(null, false, { message: 'User not found' });
 
     }
     
@@ -32,14 +32,14 @@ async function (email, password, done) {
 
       if (passwordMatch) {
         // password match
-        done(null, user);
+        return done(null, user);
       } else {
         // password don't match
-        done(null, false, { message: 'Incorrect password' });
+        return done(null, false, { message: 'Incorrect password' });
       }
     } else {
         // password does not exist
-        done(null, false, { message: 'User did not register with email and password. Try other login methods' });
+        return done(null, false, { message: 'User did not register with email and password. Try other login methods' });
     }
 
   } catch (error) {
@@ -337,7 +337,7 @@ exports.authPostLogin = passport.authenticate('local', {
  * log in failure
  */
 exports.authLoginFailure = (req, res) => {
-  res.send('Something went wrong...');
+  res.render('login-failure');
 };
 
 
