@@ -54,6 +54,6 @@ Follow these steps to set up the HabitatConnect backend:
 
 ## Frontend and Documentation
 
-Don't forget to set up the [HabitatConnect Frontend](https://github.com/HabitatConnect/Frontend) and [Documentation](https://github.com/HabitatConnect/Documentation) repositories as well to complete the full setup of the HabitatConnect application.
+Don't forget to check out the [HabitatConnect Frontend](https://github.com/HabitatConnect/Frontend) and [Documentation](https://github.com/HabitatConnect/Documentation) repositories as well to enjoy the full setup of the HabitatConnect application!
 
 You are now ready to develop and run the HabitatConnect application with a fully configured backend. Happy coding!
