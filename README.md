@@ -50,7 +50,7 @@ Follow these steps to set up the HabitatConnect backend:
      ```
      npm run start
      ```
-   - Your HabitatConnect backend should now be up and running, ready to serve API requests.
+   - Your HabitatConnect backend should now be up and running.
 
 ## Frontend and Documentation
 
