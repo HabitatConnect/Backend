@@ -64,8 +64,9 @@ We will create a folder containing three repositories: Backend (server), Fronten
      ```
 8. Congrats! HabitatConnect should now be up and running.
 
+# Backend Architecture
+![image](https://github.com/HabitatConnect/Backend/assets/124285890/069e4168-1a1a-4131-bf4e-6407d352f5e8)
+
 # Frontend and Documentation
 
 Don't forget to check out the HabitatConnect [Frontend](https://github.com/HabitatConnect/Frontend) and [Documentation](https://github.com/HabitatConnect/Documentation) repositories!
-
-You are now ready to run the HabitatConnect application. Happy coding!
